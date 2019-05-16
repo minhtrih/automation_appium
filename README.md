@@ -8,7 +8,7 @@
 ## Running Tests
 
 * To run all of the tests, run `yarn start`
-* To run individual tests, run `$ yarn /mocha src/path/to/test.js`
+* To run individual tests, run `$ yarn /mocha test/path/to/test.js`
 
 ## Troubleshooting
 
