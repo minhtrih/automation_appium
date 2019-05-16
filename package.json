@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Appium sample code using 'wd'",
   "scripts": {
-    "start": "mocha src/basic/android-sendo.js",
+    "start": "mocha test/basic/android-sendo.js",
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install"
   },
   "author": "Dan Graham",
