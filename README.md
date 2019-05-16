@@ -3,12 +3,12 @@
 ## Setup
 
 * Must have NodeJS (6+) and NPM installed (https://nodejs.org/en/)
-* Install dependencies by running `npm install`
+* Install dependencies by running `yarn`
 
 ## Running Tests
 
-* To run all of the tests, run `npm test`
-* To run individual tests, run `$(npm bin)/mocha test/path/to/test.js`
+* To run all of the tests, run `yarn start`
+* To run individual tests, run `$ yarn /mocha src/path/to/test.js`
 
 ## Troubleshooting
 
