@@ -7,8 +7,8 @@
 
 ## Running Tests
 
-* To run all of the tests, run `npm test`
-* To run individual tests, run `$(npm bin)/mocha test/path/to/test.js`
+* To run all of the tests, run `yarn start`
+* To run individual tests, run `$ yarn /mocha test/path/to/test.js`
 
 ## Troubleshooting
 
