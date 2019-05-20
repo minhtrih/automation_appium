@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Appium sample code using 'wd'",
   "scripts": {
-    "start": "mocha test/basic/android-sendo.js",
+    "test": "mocha test/basic/android-sendo.js",
+    "start": "mocha test/basic/server.js",
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install"
   },
   "author": "Dan Graham",
@@ -13,14 +14,15 @@
     "npm": ">=6"
   },
   "devDependencies": {
-    "@babel/register": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "chai": "^4.1.2",
     "mocha": "^6.0.0",
+    "readline-sync": "^1.4.9",
     "wd": "^1.5.0"
   },
   "dependencies": {
-    "readline-sync": "^1.4.9"
+    "express": "^4.16.4"
   }
 }
