@@ -50,7 +50,6 @@ const androidCaps = {
   platformVersion:
     process.env.ANDROID_PLATFORM_VERSION || DEFAULT_ANDROID_PLATFORM_VERSION,
   app: undefined, // Will be added in tests
-  appWaitActivity: '.module.home.view.HomeActivity',
   ...sauceCaps
 };
 
@@ -69,6 +68,8 @@ const serverConfig = SAUCE_TESTING
 const GITHUB_ASSET_BASE = 'http://appium.github.io/appium/assets';
 const LOCAL_ASSET_BASE = path.resolve(__dirname, '..', '..', 'appAPK');
 
+const NAME_APK = 'com.bplus.vtpay_2019-06-27.apk';
+
 let iosTestApp, androidApiDemos;
 if (SAUCE_TESTING) {
   // TODO: Change thes URLs to updated locations
@@ -77,10 +78,7 @@ if (SAUCE_TESTING) {
 } else {
   iosTestApp = path.resolve(LOCAL_ASSET_BASE, 'TestApp.app.zip');
   // androidApiDemos = path.resolve(LOCAL_ASSET_BASE, 'ApiDemos-debug.apk');
-  androidApiDemos = path.resolve(
-    LOCAL_ASSET_BASE,
-    'Sendo_App_v4.0.14_apkpure.com.apk'
-  );
+  androidApiDemos = path.resolve(LOCAL_ASSET_BASE, NAME_APK);
 }
 
 module.exports = {

@@ -4,7 +4,8 @@
   "description": "Appium sample code using 'wd'",
   "scripts": {
     "test": "mocha test/basic/android-sendo.js",
-    "start": "mocha test/basic/server.js",
+    "sendo": "mocha test/basic/sendo.js",
+    "vtpay": "mocha test/basic/viettel-pay.js",
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install"
   },
   "author": "Dan Graham",
