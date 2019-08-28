@@ -49,11 +49,12 @@ async function login() {
     'com.bplus.vtpay:id/md_buttonDefaultPositive',
     5000
   );
+  await md_button_default_positive.click();
 
   return 'success';
 }
 
-app.get('/', async (req, res) => {
+app.get('/login', async (req, res) => {
   try {
     console.log('login');
     let result = await login();
@@ -78,6 +79,11 @@ async function getBalance() {
   const get_balance = await money.getAttribute('text');
   return get_balance;
 }
+
+app.get('/otp/:otp', async (req, res) => {
+  const dataFormUrl = req.params;
+  console.log('otp: ', dataFormUrl);
+});
 
 app.get('/recharge/:receiver/:amount', async (req, res, next) => {
   const dataFormUrl = req.params;
