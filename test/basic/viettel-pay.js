@@ -187,6 +187,15 @@ app.get('/otp/:otp', async (req, res) => {
   }
 });
 
+app.get('/reset-app', async (req, res) => {
+  // const statusShutDown = await shutdownAppium();
+  // console.log('Shutdown', statusShutDown);
+
+  const statusStart = await startAppium();
+  console.log('Appium started status', statusStart);
+  res.send('Reset success');
+});
+
 app.get('/recharge/:receiver/:amount', async (req, res, next) => {
   const dataFormUrl = req.params;
   console.log('dataFormUrl: ', dataFormUrl);
