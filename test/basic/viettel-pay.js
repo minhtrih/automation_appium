@@ -28,26 +28,30 @@ async function login() {
   const xpath_md_button_default_positive =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.TextView';
 
+  const id_input_phone_number = 'com.bplus.vtpay:id/edt_phone_number';
+  const id_input_password = 'com.bplus.vtpay:id/edt_password';
+  const id_md_button_default_positive =
+    'com.bplus.vtpay:id/md_buttonDefaultPositive';
+
   const btn_start = await driver.waitForElementByXPath(xpath_btn_start, 5000);
   await btn_start.click();
 
   const accept = await driver.waitForElementByXPath(xpath_accept);
   await accept.click();
 
-  const input_phone_number = await driver.waitForElementById(
-    'com.bplus.vtpay:id/edt_phone_number',
+  const input_phone_number = await driver.waitForElementByXPath(
+    xpath_input_phone_number,
     30000
   );
-
   await input_phone_number.sendKeys(phoneNumber);
 
-  const input_password = await driver.waitForElementById(
-    'com.bplus.vtpay:id/edt_password'
+  const input_password = await driver.waitForElementByXPath(
+    xpath_input_password
   );
   await input_password.sendKeys(passLogin);
 
-  const md_button_default_positive = await driver.waitForElementById(
-    'com.bplus.vtpay:id/md_buttonDefaultPositive',
+  const md_button_default_positive = await driver.waitForElementByXPath(
+    xpath_md_button_default_positive,
     5000
   );
   if (md_button_default_positive) {
@@ -75,7 +79,7 @@ async function getBalance() {
   return get_balance;
 }
 
-async function recharge() {
+async function recharge(data) {
   const xpath_choose_recharge =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/android.widget.ScrollView/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout[2]/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout[3]/android.widget.TextView';
   const choose_recharge = await driver.waitForElementByXPath(
@@ -86,46 +90,49 @@ async function recharge() {
 
   const xpath_btn_understand =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.Button';
-  const btn_understand = await driver.waitForElementById(
-    'com.bplus.vtpay:id/btn_understend',
+  const id_btn_understand = 'com.bplus.vtpay:id/btn_understend';
+  const btn_understand = await driver.waitForElementByXPath(
+    xpath_btn_understand,
     5000
   );
   btn_understand.click();
 
   const xpath_permission_allow_button =
     '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]';
-  const permission_allow_button = await driver.waitForElementById(
-    'com.android.packageinstaller:id/permission_allow_button',
+  const id_permission_allow_button =
+    'com.android.packageinstaller:id/permission_allow_button';
+  const permission_allow_button = await driver.waitForElementByXPath(
+    xpath_permission_allow_button,
     5000
   );
   await permission_allow_button.click();
 
   const xpath_edt_phone =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.FrameLayout[1]/android.widget.LinearLayout/android.widget.RelativeLayout[1]/android.widget.EditText';
-  const input_edt_phone = await driver.waitForElementById(
-    'com.bplus.vtpay:id/edt_phone',
+  const id_edt_phone = 'com.bplus.vtpay:id/edt_phone';
+  const input_edt_phone = await driver.waitForElementByXPath(
+    xpath_edt_phone,
     5000
   );
-  await input_edt_phone.sendKeys(dataFormUrl.receiver);
+  await input_edt_phone.sendKeys(data.receiver);
 
   const xpath_edt_amount =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.FrameLayout[1]/android.widget.LinearLayout/android.widget.RelativeLayout[2]/android.widget.EditText';
-  const input_edt_amount = await driver.waitForElementById(
-    'com.bplus.vtpay:id/edt_amount'
-  );
-  await input_edt_amount.sendKeys(dataFormUrl.amount);
+  const id_edt_amount = 'com.bplus.vtpay:id/edt_amount';
+  const input_edt_amount = await driver.waitForElementByXPath(xpath_edt_amount);
+  await input_edt_amount.sendKeys(data.amount);
 
   const xpath_tv_send =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.FrameLayout[1]/android.widget.LinearLayout/android.widget.Button';
-  const btn_tv_send = await driver.waitForElementById(
-    'com.bplus.vtpay:id/tv_send'
-  );
+  const id_tv_send = 'com.bplus.vtpay:id/tv_send';
+  const btn_tv_send = await driver.waitForElementByXPath(xpath_tv_send);
   await btn_tv_send.click();
 
-  const xpath_confirm =
+  const xpath_btn_confirm =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout[2]/android.widget.Button';
-  const btn_confirm = await driver.waitForElementById(
-    'com.bplus.vtpay:id/btn_confirm',
+  const id_btn_confirm = 'com.bplus.vtpay:id/btn_confirm';
+  const btn_confirm = await driver.waitForElementByXPath(
+    xpath_btn_confirm,
     5000
   );
   await btn_confirm.click();
@@ -161,6 +168,7 @@ async function getOTP(otp) {
     5000
   );
   await btn_confirm.click();
+  return 'Get OTP Success';
 }
 
 app.get('/login', async (req, res) => {
@@ -178,13 +186,14 @@ app.get('/login', async (req, res) => {
 app.get('/otp/:otp', async (req, res) => {
   const dataFormUrl = req.params;
   console.log('otp: ', dataFormUrl);
-  try {
-    const result = await getOTP(dataFormUrl.otp);
-    console.log('TCL: result', result);
-    res.send(result);
-  } catch (e) {
-    res.send(e);
-  }
+  // try {
+  //   const result = await getOTP(dataFormUrl.otp);
+  //   console.log('TCL: result', result);
+  //   res.send(result);
+  // } catch (e) {
+  //   res.send(e);
+  // }
+  res.send(dataFormUrl);
 });
 
 app.get('/reset-app', async (req, res) => {
@@ -208,7 +217,7 @@ app.get('/recharge/:receiver/:amount', async (req, res, next) => {
     }
 
     console.log('recharge');
-    let result = await recharge();
+    let result = await recharge(dataFormUrl);
     if (result === 'success') {
       res.send(result + ' rechanrge');
     }
@@ -267,9 +276,10 @@ async function shutdownAppium() {
   console.log('quit');
   // shutdown driver app
   await driver.quit();
-  if (SAUCE_TESTING && driver) {
-    await driver.sauceJobStatus(allPassed);
-  }
+  // if (SAUCE_TESTING && driver) {
+  //   await driver.sauceJobStatus(allPassed);
+  // }
+  return 'Byeeeeeeee';
 }
 
 app.listen(port, async () => {
