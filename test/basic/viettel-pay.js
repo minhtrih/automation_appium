@@ -17,17 +17,17 @@ const app = express();
 const port = 3000;
 
 // Kiểm tra policy vtpay
-async function check_policy() {
+async function checkPolicy() {
   const xpath_btn_start =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout[2]/android.widget.TextView';
   const xpath_accept =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.TextView[2]';
 
   const id_btn_start = 'com.bplus.vtpay:id/btn_start';
+  const id_btn_accept = 'com.bplus.vtpay:id/accept';
 
   const check_btn_start = await driver.hasElementById(id_btn_start);
   if (check_btn_start) {
-    console.log('check_btn_start', check_btn_start);
     const btn_start = await driver.waitForElementByXPath(xpath_btn_start, 5000);
     await btn_start.click();
     const accept = await driver.waitForElementByXPath(xpath_accept, 5000);
@@ -36,12 +36,12 @@ async function check_policy() {
 }
 
 // Kiểm tra có thông báo hiện lên không
-async function check_notification() {
+async function checkNotification() {
   const xpath_md_button_default_positive =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.TextView';
   const id_md_button_default_positive =
     'com.bplus.vtpay:id/md_buttonDefaultPositive';
-
+  await driver.sleep(5000);
   const check_md_button_default_positive = await driver.hasElementById(
     id_md_button_default_positive
   );
@@ -64,7 +64,7 @@ async function login() {
   const id_input_phone_number = 'com.bplus.vtpay:id/edt_phone_number';
   const id_input_password = 'com.bplus.vtpay:id/edt_password';
 
-  await check_policy();
+  await checkPolicy();
 
   const input_phone_number = await driver.waitForElementById(
     id_input_phone_number,
@@ -75,36 +75,86 @@ async function login() {
   const input_password = await driver.waitForElementById(id_input_password);
   await input_password.sendKeys(passLogin);
 
-  await check_notification();
+  await driver.sleep(5000);
+  // sai mật khẩu
+  const xpath_md_content = '';
+  const id_md_content = 'com.bplus.vtpay:id/md_content';
+  const check_md_content = await driver.elementByIdIfExists(id_md_content);
+  if (check_md_content) {
+    const get_notice = await check_md_content.getAttribute('text');
+    if (get_notice.includes('sai mật khẩu')) {
+      await checkNotification();
+      return get_notice;
+    }
+  }
+  // tài khoản không tồn tại
+  const xpath_content =
+    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.TextView[2]';
+  const id_content = 'com.bplus.vtpay:id/content';
+  const check_content = await driver.elementByIdIfExists(id_content);
+  console.log('TCL: login -> check_content', check_content);
+  if (check_content) {
+    const get_notice = await check_content.getAttribute('text');
+    if (check_content.includes('chưa đăng dịch vụ')) {
+      const xpath_cancel_btn =
+        '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[1]';
+      const id_cancel_btn = 'com.bplus.vtpay:id/cancel_btn';
+      await driver.waitForElementById(id_cancel_btn, 5000).click();
+      return get_notice;
+    }
+  }
+  await checkNotification();
   return 'success';
 }
 
 // Kiểm tra số dư trong ví
 async function getBalance() {
-  const view_money = await driver.waitForElementById(
-    'com.bplus.vtpay:id/view_money',
-    5000
-  );
-  await view_money.click();
-
+  let get_balance = '';
   const money = await driver.waitForElementById(
     'com.bplus.vtpay:id/login_register',
     5000
   );
-  const get_balance = await money.getAttribute('text');
+  get_balance = await money.getAttribute('text');
+  if (get_balance === '******') {
+    const view_money = await driver.waitForElementById(
+      'com.bplus.vtpay:id/view_money',
+      5000
+    );
+    await view_money.click();
+  }
+  get_balance = await money.getAttribute('text');
   return get_balance;
 }
 
+async function checkUnderstand() {
+  const xpath_btn_understand =
+    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.Button';
+  const id_btn_understand = 'com.bplus.vtpay:id/btn_understend';
+
+  await driver.sleep(5000);
+  const check_btn_understand = await driver.hasElementById(id_btn_understand);
+  console.log('check_btn_understand', check_btn_understand);
+  if (check_btn_understand) {
+    const btn_understand = await driver.waitForElementByXPath(
+      xpath_btn_understand,
+      5000
+    );
+    btn_understand.click();
+  }
+}
+
 // Kiểm tra quyền kết nối tới danh bạ
-async function check_permission() {
+async function checkPermission() {
   const xpath_permission_allow_button =
     '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]';
   const id_permission_allow_button =
     'com.android.packageinstaller:id/permission_allow_button';
+
+  await driver.sleep(5000);
   const check_permission_allow_button = await driver.hasElementByXPath(
     xpath_permission_allow_button
   );
-  if (xpath_permission_allow_button) {
+  if (check_permission_allow_button) {
     const permission_allow_button = await driver.waitForElementByXPath(
       xpath_permission_allow_button,
       5000
@@ -124,16 +174,9 @@ async function recharge(data) {
   );
   await choose_recharge.click();
 
-  const xpath_btn_understand =
-    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.Button';
-  const id_btn_understand = 'com.bplus.vtpay:id/btn_understend';
-  const btn_understand = await driver.waitForElementByXPath(
-    xpath_btn_understand,
-    5000
-  );
-  btn_understand.click();
+  await checkUnderstand();
 
-  await check_permission();
+  await checkPermission();
 
   const xpath_edt_phone =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.FrameLayout[1]/android.widget.LinearLayout/android.widget.RelativeLayout[1]/android.widget.EditText';
@@ -173,6 +216,47 @@ async function recharge(data) {
     );
     await btn_number.click();
   }
+
+  await driver.sleep(5000);
+  const xpath_content =
+    '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.TextView[2]';
+  const id_content = 'com.bplus.vtpay:id/content';
+  const check_content = await driver.elementByIdIfExists(id_content);
+  if (check_content) {
+    const get_notice = await check_content.getAttribute('text');
+    if (check_content.includes('phiên làm việc')) {
+      const xpath_confirm_btn =
+        '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView';
+      const id_confirm_btn = 'com.bplus.vtpay:id/confirm_btn';
+      await driver.waitForElementById(id_confirm_btn, 5000).click();
+      return get_notice;
+    }
+  }
+
+  // sai mật khẩu
+  const xpath_md_content = '';
+  const id_md_content = 'com.bplus.vtpay:id/md_content';
+  const check_md_content = await driver.elementByIdIfExists(id_md_content);
+  if (check_md_content) {
+    const get_notice = await check_md_content.getAttribute('text');
+    if (get_notice.includes('sai mật khẩu')) {
+      await checkNotification();
+      return get_notice;
+    }
+  }
+
+  return 'success';
+}
+
+async function goBackHome() {
+  const id_btn_go_home = 'com.bplus.vtpay:id/btn_go_home';
+  const xpath_btn_go_home =
+    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.ScrollView/android.widget.LinearLayout/android.widget.FrameLayout[2]/android.widget.LinearLayout/android.widget.LinearLayout[2]';
+  // const check_back_home = await driver.hasElementById(id_btn_go_home);
+  // if (check_back_home) {
+  const btn_back_home = await driver.waitForElementById(id_btn_go_home, 5000);
+  await btn_back_home.click();
+  // }
 }
 
 // Lấy OTP
@@ -196,6 +280,11 @@ async function getOTP(otp) {
     5000
   );
   await btn_confirm.click();
+
+  await goBackHome();
+
+  await checkNotification();
+
   return 'Get OTP Success';
 }
 
@@ -204,9 +293,7 @@ app.get('/login', async (req, res) => {
   try {
     console.log('login');
     let result = await login();
-    if (result === 'success') {
-      res.send(result);
-    }
+    res.send(result);
   } catch (e) {
     res.send(e);
   }
@@ -247,9 +334,7 @@ app.get('/recharge/:receiver/:amount', async (req, res, next) => {
 
     console.log('recharge');
     let result = await recharge(dataFormUrl);
-    if (result === 'success') {
-      res.send(result + ' rechanrge');
-    }
+    res.send(result);
   } catch (ex) {
     res.send('Send again');
   }
