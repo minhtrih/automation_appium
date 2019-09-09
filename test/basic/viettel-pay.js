@@ -28,26 +28,28 @@ async function login() {
   const xpath_md_button_default_positive =
     '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.TextView';
 
+  const id_btn_start = 'com.bplus.vtpay:id/btn_start';
   const id_input_phone_number = 'com.bplus.vtpay:id/edt_phone_number';
   const id_input_password = 'com.bplus.vtpay:id/edt_password';
   const id_md_button_default_positive =
     'com.bplus.vtpay:id/md_buttonDefaultPositive';
 
-  const btn_start = await driver.waitForElementByXPath(xpath_btn_start, 5000);
-  await btn_start.click();
+  const check_btn_start = await driver.hasElementById(id_btn_start);
+  if (check_btn_start) {
+    console.log('check_btn_start', check_btn_start);
+    const btn_start = await driver.waitForElementByXPath(xpath_btn_start, 5000);
+    await btn_start.click();
+    const accept = await driver.waitForElementByXPath(xpath_accept, 5000);
+    await accept.click();
+  }
 
-  const accept = await driver.waitForElementByXPath(xpath_accept);
-  await accept.click();
-
-  const input_phone_number = await driver.waitForElementByXPath(
-    xpath_input_phone_number,
+  const input_phone_number = await driver.waitForElementById(
+    id_input_phone_number,
     30000
   );
   await input_phone_number.sendKeys(phoneNumber);
 
-  const input_password = await driver.waitForElementByXPath(
-    xpath_input_password
-  );
+  const input_password = await driver.waitForElementById(id_input_password);
   await input_password.sendKeys(passLogin);
 
   const md_button_default_positive = await driver.waitForElementByXPath(
@@ -80,8 +82,9 @@ async function getBalance() {
 }
 
 async function recharge(data) {
+  // '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/android.widget.ScrollView/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout[2]/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout[3]/android.widget.TextView'
   const xpath_choose_recharge =
-    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/android.widget.ScrollView/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout[2]/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout[3]/android.widget.TextView';
+    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/androidx.viewpager.widget.ViewPager/android.view.ViewGroup/android.widget.ScrollView/androidx.recyclerview.widget.RecyclerView/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.widget.LinearLayout[3]/android.widget.TextView';
   const choose_recharge = await driver.waitForElementByXPath(
     xpath_choose_recharge,
     5000
@@ -148,14 +151,14 @@ async function recharge(data) {
 }
 
 async function getOTP(otp) {
-  try {
-    const tv_resend = await driver.waitForElementById(
-      'com.bplus.vtpay:id/tv_resend',
-      5000
-    );
+  const id_tv_resend = 'com.bplus.vtpay:id/tv_resend';
+  const check_tv_resend = await driver.hasElementById(id_tv_resend);
+  console.log('check_tv_resend', check_tv_resend);
+  if (check_tv_resend) {
+    const tv_resend = await driver.waitForElementById(id_tv_resend, 5000);
     await tv_resend.click();
     return 'Get OTP Again';
-  } catch (error) {}
+  }
 
   const input_otp = await driver.waitForElementById(
     'com.bplus.vtpay:id/edt_name',
@@ -186,14 +189,14 @@ app.get('/login', async (req, res) => {
 app.get('/otp/:otp', async (req, res) => {
   const dataFormUrl = req.params;
   console.log('otp: ', dataFormUrl);
-  // try {
-  //   const result = await getOTP(dataFormUrl.otp);
-  //   console.log('TCL: result', result);
-  //   res.send(result);
-  // } catch (e) {
-  //   res.send(e);
-  // }
-  res.send(dataFormUrl);
+  try {
+    await driver.sleep(5000);
+    const result = await getOTP(dataFormUrl.otp);
+    console.log('TCL: result', result);
+    res.send(result);
+  } catch (e) {
+    res.send(e);
+  }
 });
 
 app.get('/reset-app', async (req, res) => {
@@ -234,6 +237,7 @@ app.get('/exit', async (req, res) => {
 
 let driver;
 let allPassed = true;
+let currentTest = 'passed';
 
 async function startAppium() {
   // Connect to Appium server
@@ -276,9 +280,10 @@ async function shutdownAppium() {
   console.log('quit');
   // shutdown driver app
   await driver.quit();
-  // if (SAUCE_TESTING && driver) {
-  //   await driver.sauceJobStatus(allPassed);
-  // }
+  allPassed = allPassed && currentTest === 'passed';
+  if (SAUCE_TESTING && driver) {
+    await driver.sauceJobStatus(allPassed);
+  }
   return 'Byeeeeeeee';
 }
 
