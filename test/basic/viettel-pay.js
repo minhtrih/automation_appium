@@ -263,6 +263,7 @@ async function goBackHome() {
 async function getOTP(otp) {
   const id_tv_resend = 'com.bplus.vtpay:id/tv_resend';
   const check_tv_resend = await driver.hasElementById(id_tv_resend);
+  console.log('check_tv_resend', check_tv_resend);
   if (check_tv_resend) {
     const tv_resend = await driver.waitForElementById(id_tv_resend, 5000);
     await tv_resend.click();
