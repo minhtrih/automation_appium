@@ -261,14 +261,14 @@ async function goBackHome() {
 
 // Lấy OTP
 async function getOTP(otp) {
-  const id_tv_resend = 'com.bplus.vtpay:id/tv_resend';
-  const check_tv_resend = await driver.hasElementById(id_tv_resend);
-  console.log('check_tv_resend', check_tv_resend);
-  if (check_tv_resend) {
-    const tv_resend = await driver.waitForElementById(id_tv_resend, 5000);
-    await tv_resend.click();
-    return 'Get OTP Again';
-  }
+  // const id_tv_resend = 'com.bplus.vtpay:id/tv_resend';
+  // const check_tv_resend = await driver.hasElementById(id_tv_resend);
+  // console.log('check_tv_resend', check_tv_resend);
+  // if (check_tv_resend) {
+  //   const tv_resend = await driver.waitForElementById(id_tv_resend, 5000);
+  //   await tv_resend.click();
+  //   return 'Get OTP Again';
+  // }
   console.log('input_otp00');
   const input_otp = await driver.waitForElementById(
     'com.bplus.vtpay:id/edt_name',
@@ -333,18 +333,26 @@ app.get('/recharge/:receiver/:amount', async (req, res, next) => {
     const balance = (await getBalance()) || 0;
     console.log('TCL: balance', balance);
     if (balance <= dataFormUrl.amount) {
-      res.send("Don't have enough balance");
+      res.send({ status: 'failed', message: 'Không đủ số dư' });
       return;
     }
 
     console.log('recharge');
     let result = await recharge(dataFormUrl);
-    res.send(result);
+    if (result === 'success') {
+      res.send({ status: 'success', message: 'Nạp tiền thành công' });
+    } else {
+      res.send({ status: 'fail', message: 'Nạp tiền thất bại' });
+    }
   } catch (ex) {
     const statusStart = await startAppium();
     const result_login = await login();
     const result_rechange = await recharge(dataFormUrl);
-    res.send(result_rechange);
+    if (result_rechange === 'success') {
+      res.send({ status: 'success', message: 'Nạp tiền thành công' });
+    } else {
+      res.send({ status: 'fail', message: 'Nạp tiền thất bại' });
+    }
   }
   next();
 });
