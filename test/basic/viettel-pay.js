@@ -269,11 +269,12 @@ async function getOTP(otp) {
     await tv_resend.click();
     return 'Get OTP Again';
   }
-
+  console.log('input_otp00');
   const input_otp = await driver.waitForElementById(
     'com.bplus.vtpay:id/edt_name',
     5000
   );
+  console.log('input_otp01');
   await input_otp.sendKeys(otp);
 
   const btn_confirm = await driver.waitForElementById(
@@ -293,25 +294,28 @@ async function getOTP(otp) {
 app.get('/login', async (req, res) => {
   try {
     console.log('login');
-    let result = await login();
+    const result = await login();
     res.send(result);
   } catch (e) {
-    res.send(e);
+    const statusStart = await startAppium();
+    const result = await login();
+    res.send(result);
   }
 });
 
 // API lấy OTP
-app.get('/otp/:otp', async (req, res) => {
+app.get('/otp/:otp', async (req, res, next) => {
   const dataFormUrl = req.params;
   console.log('otp: ', dataFormUrl);
   try {
-    await driver.sleep(5000);
+    // await driver.sleep(2000);
     const result = await getOTP(dataFormUrl.otp);
     console.log('TCL: result', result);
     res.send(result);
   } catch (e) {
     res.send(e);
   }
+  next();
 });
 
 // API reset lại app
@@ -337,7 +341,10 @@ app.get('/recharge/:receiver/:amount', async (req, res, next) => {
     let result = await recharge(dataFormUrl);
     res.send(result);
   } catch (ex) {
-    res.send('Send again');
+    const statusStart = await startAppium();
+    const result_login = await login();
+    const result_rechange = await recharge(dataFormUrl);
+    res.send(result_rechange);
   }
   next();
 });
