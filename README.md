@@ -23,6 +23,7 @@
 - ViettelPay
   - http://localhost:3000/reset-app : rebuild app again if error
   - http://localhost:3000/login : login user, password
+  - http://localhost:3000/logout : login user, password
   - http://localhost:3000/recharge/{phone}/{amount} : input phone number and money
   - http://localhost:3000/otp/{otp} : otp of phone number
   - http://localhost:3000/exit : shutdown app
